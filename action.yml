@@ -7,7 +7,7 @@ inputs:
   api-key:
     required: true
   reference-branch:
-    default: ${{ github.event.pull_request.base.ref }}
+    default: ${{ github.event.pull_request.base.ref || 'develop' }}
   context-lines:
     default: 100
   prompt-text:

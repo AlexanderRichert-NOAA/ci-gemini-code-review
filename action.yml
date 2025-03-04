@@ -44,7 +44,7 @@ runs:
           git diff --no-prefix -U${{ inputs.context-lines }} reference/${{ inputs.reference-branch }} HEAD -- $file >> ${file}.diff
           ${{ github.action_path }}/query_gemini.py ${file}.diff ${file}.review -k GEMINI_API_KEY
           ${{ github.action_path }}/md_to_html.py ${file}.review ${file}.review.html
-          mv ${file}.review.htmm review_by_file/.
+          mv ${file}.review.html review_by_file/.
         done
 
     - name: 'Upload reviews as artifact'

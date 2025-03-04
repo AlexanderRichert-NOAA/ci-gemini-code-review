@@ -28,6 +28,7 @@ runs:
       env:
         GEMINI_API_KEY: ${{ inputs.api-key }}
       run: |
+        sudo apt-get install python3-markdown
         mkdir review_by_file
         cd ${{ inputs.code-dir }}
         # Get list of differing files compared with reference URL/branch:

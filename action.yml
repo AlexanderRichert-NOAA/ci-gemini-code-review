@@ -51,4 +51,4 @@ runs:
       uses: actions/upload-artifact@v4
       with:
         name: gemini-reviews-${{ github.sha }}-${{ inputs.reference-branch }}
-        path: review_by_file/
+        path: ${{ inputs.code-dir }}/review_by_file/

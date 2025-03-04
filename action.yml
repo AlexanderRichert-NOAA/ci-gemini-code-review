@@ -1,0 +1,50 @@
+name: 'Gemini code review'
+description: 'Query Gemini API to create a code review'
+
+inputs:
+  code-dir:
+    default: coderoot
+  api-key:
+    required: true
+  reference-branch:
+    default: ${{ github.event.pull_request.base.ref }}
+  context-lines:
+    default: 100
+  prompt-text:
+    default: "Create a code review for the following file diff that summarizes changes, identifies potential errors, and suggests better approaches if appropriate.\n"
+
+runs:
+  using: 'composite'
+  steps:
+
+    - name: 'Checkout modified code'
+      if: ${{ inputs.code-dir != coderoot }}
+      uses: actions/checkout@v4
+      with:
+        path: coderoot
+
+    - name: 'Get diffs and run query'
+      shell: bash
+      env:
+        GEMINI_API_KEY: ${{ inputs.api-key }}
+      run: |
+        mkdir review_by_file
+        # Get list of differing files compared with reference URL/branch:
+        git remote add reference https://github.com/${{ github.repository_owner }}/${{ github.event.repository.name }}
+        diff_files=$(git diff --name-only reference/${{ inputs.reference-branch }} HEAD)
+        # Get diff for each file and query Gemini:
+        for file in $diff_files ; do
+          if [ ! -f $file ]; then continue ; fi
+          filetype=$(file -b $file)
+          if [[ " $filetype " =~ " data " ]]; then continue ; fi
+          echo -e "${{ inputs.prompt-text }}" > ${file}.diff
+          git diff --no-prefix -U${{ inputs.context-lines }} reference/${{ inputs.reference-branch }} HEAD -- $file >> ${file}.diff
+          ${{ github.action_path }}/query_gemini.py ${file}.diff ${file}.review -k GEMINI_API_KEY
+          mv ${file}.review review_by_file/.
+        done
+
+    - name: 'Upload reviews as artifact'
+      uses: actions/upload-artifact@v4
+      with:
+        name: gemini-reviews-${{ github.sha }}-${{ inputs.reference-branch }}
+        path: review_by_file/

@@ -18,7 +18,7 @@ runs:
   steps:
 
     - name: 'Checkout modified code'
-      if: ${{ inputs.code-dir != 'coderoot' }}
+      if: ${{ inputs.code-dir == 'coderoot' }}
       uses: actions/checkout@v4
       with:
         path: coderoot

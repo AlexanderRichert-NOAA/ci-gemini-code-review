@@ -29,8 +29,8 @@ runs:
         GEMINI_API_KEY: ${{ inputs.api-key }}
       run: |
         sudo apt-get install python3-markdown
-        mkdir review_by_file
         cd ${{ inputs.code-dir }}
+        mkdir review_by_file
         # Get list of differing files compared with reference URL/branch:
         git remote add reference https://github.com/${{ github.repository_owner }}/${{ github.event.repository.name }}
         git remote update reference

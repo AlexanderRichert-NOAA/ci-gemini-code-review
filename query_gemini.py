@@ -14,6 +14,7 @@ apikey_group.add_argument("-f", "--key-file", help="Path to file containing API 
 
 args = parser.parse_args()
 
+import json
 import os
 import requests
 

@@ -32,6 +32,7 @@ runs:
         cd ${{ inputs.code-dir }}
         # Get list of differing files compared with reference URL/branch:
         git remote add reference https://github.com/${{ github.repository_owner }}/${{ github.event.repository.name }}
+        git remote update reference
         diff_files=$(git diff --name-only reference/${{ inputs.reference-branch }} HEAD)
         # Get diff for each file and query Gemini:
         for file in $diff_files ; do

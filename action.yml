@@ -19,7 +19,7 @@ inputs:
   context-lines:
     default: 100
   prompt-text:
-    default: "Create a code review for the following file diff. Create a bulleted list summarizing the changes, including the inferred purpose of the change, any errors, and suggestions for better approaches if appropriate.\n"
+    default: "Create a code review for the following file diff. Create a bulleted list summarizing the changes, including the inferred purpose of the change, any errors, and suggestions for better approaches if appropriate. Please format the response according to syntax usable by the Python Markdown module.\n"
   github-token:
     description: "GitHub token"
 

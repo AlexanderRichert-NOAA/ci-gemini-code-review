@@ -1,7 +1,14 @@
-name: 'Gemini code review'
-description: 'Query Gemini API to create a code review'
+name: 'LLM code review'
+description: 'Query an LLM API to create a code review'
 
 inputs:
+  backend:
+    type: choice
+    options:
+    - gemini-2.0
+    - mistral
+    default: gemini-2.0
+    description: "Language model to query"
   code-dir:
     default: "coderoot"
   api-key:
@@ -35,14 +42,14 @@ runs:
         git remote add reference https://github.com/${{ github.repository_owner }}/${{ github.event.repository.name }}
         git remote update reference
         diff_files=$(git diff --name-only reference/${{ inputs.reference-branch }} HEAD)
-        # Get diff for each file and query Gemini:
+        # Get diff for each file and query LLM API:
         for file in $diff_files ; do
           if [ ! -f $file ]; then continue ; fi
           filetype=$(file -b $file)
           if [[ " $filetype " =~ " data " ]]; then continue ; fi
           echo -e "${{ inputs.prompt-text }}" > ${file}.diff
           git diff --no-prefix -U${{ inputs.context-lines }} reference/${{ inputs.reference-branch }} HEAD -- $file >> ${file}.diff
-          ${{ github.action_path }}/query_gemini.py ${file}.diff ${file}.review -k GEMINI_API_KEY
+          ${{ github.action_path }}/query_llm_api.py ${file}.diff ${file}.review --backend ${{ inputs.backend }} --key-variable GEMINI_API_KEY
           ${{ github.action_path }}/md_to_html.py ${file}.review ${file}.review.html
           mv ${file}.review.html review_by_file/.
         done
@@ -50,5 +57,5 @@ runs:
     - name: 'Upload reviews as artifact'
       uses: actions/upload-artifact@v4
       with:
-        name: gemini-reviews-${{ github.sha }}-${{ inputs.reference-branch }}
+        name: ${{ inputs.backend }}-code-reviews-${{ github.sha }}-${{ inputs.reference-branch }}
         path: ${{ inputs.code-dir }}/review_by_file/

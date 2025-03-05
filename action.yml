@@ -12,7 +12,7 @@ inputs:
   code-dir:
     default: "coderoot"
   api-key-variable:
-    required: true
+    default: LLM_API_KEY
     description: "Name of variable in which API key is stored; must be set in calling workflow"
   reference-branch:
     default: ${{ github.event.pull_request.base.ref || 'develop' }}

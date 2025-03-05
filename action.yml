@@ -11,8 +11,9 @@ inputs:
     description: "Language model to query"
   code-dir:
     default: "coderoot"
-  api-key:
+  api-key-variable:
     required: true
+    description: "Name of variable in which API key is stored; must be set in calling workflow"
   reference-branch:
     default: ${{ github.event.pull_request.base.ref || 'develop' }}
   context-lines:
@@ -32,8 +33,6 @@ runs:
 
     - name: 'Get diffs and run query'
       shell: bash
-      env:
-        GEMINI_API_KEY: ${{ inputs.api-key }}
       run: |
         sudo apt-get install python3-markdown python3-pygments
         cd ${{ inputs.code-dir }}
@@ -49,7 +48,7 @@ runs:
           if [[ " $filetype " =~ " data " ]]; then continue ; fi
           echo -e "${{ inputs.prompt-text }}" > ${file}.diff
           git diff --no-prefix -U${{ inputs.context-lines }} reference/${{ inputs.reference-branch }} HEAD -- $file >> ${file}.diff
-          ${{ github.action_path }}/query_llm_api.py ${file}.diff ${file}.review --backend ${{ inputs.backend }} --key-variable GEMINI_API_KEY
+          ${{ github.action_path }}/query_llm_api.py ${file}.diff ${file}.review --backend ${{ inputs.backend }} --key-variable ${{ inputs.api-key-variable }}
           ${{ github.action_path }}/md_to_html.py ${file}.review ${file}.review.html
           mv ${file}.review.html review_by_file/.
         done

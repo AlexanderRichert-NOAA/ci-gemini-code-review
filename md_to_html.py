@@ -9,7 +9,7 @@ output_name = sys.argv[2]
 with open(file_name, "r") as file:
   md_review = file.read()
 
-html_review = markdown.markdown(md_review, extensions=['extra','codehilite'])
+html_review = markdown.markdown(md_review, extensions=['extra','codehilite','legacy_attrs'])
 
 with open(output_name, "w") as output_file:
   output_file.write(html_review)

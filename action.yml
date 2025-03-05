@@ -36,7 +36,7 @@ runs:
     - name: 'Get diffs and run query'
       shell: bash
       run: |
-        sudo apt-get install python3-markdown python3-pygments
+        sudo apt-get install pandoc
         cd ${{ inputs.code-dir }}
         mkdir review_by_file
         # Get list of differing files compared with reference URL/branch:
@@ -51,7 +51,7 @@ runs:
           echo -e "${{ inputs.prompt-text }}" > ${file}.diff
           git diff --no-prefix -U${{ inputs.context-lines }} reference/${{ inputs.reference-branch }} HEAD -- $file >> ${file}.diff
           ${{ github.action_path }}/query_llm_api.py ${file}.diff ${file}.review --backend ${{ inputs.backend }} --key-variable ${{ inputs.api-key-variable }}
-          ${{ github.action_path }}/md_to_html.py ${file}.review ${file}.review.html
+          pandoc -f commonmark ${file}.review -o ${file}.review.html
           mv ${file}.review.html review_by_file/.
         done
 

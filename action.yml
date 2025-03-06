@@ -14,15 +14,17 @@ inputs:
   api-key-variable:
     default: LLM_API_KEY
     description: "Name of variable in which API key is stored; must be set in calling workflow"
-  reference-repo:
-    description: "Owner/repo of authoritative branch (e.g., 'NOAA-EMC/NCEPLIBS-ip'); defaults to ultimate fork parent"
-    default: ""
+  reference-owner:
+    description: "Owner of authoritative branch (e.g., NOAA-EMC)"
+    default: NOAA-EMC
   reference-branch:
     default: ${{ github.event.pull_request.base.ref || 'develop' }}
   context-lines:
     default: 100
   prompt-text:
     default: "Create a code review for the following file diff. Create a bulleted list summarizing the changes, including the inferred purpose of the change, any errors, and suggestions for better approaches if appropriate.\n"
+  github-token:
+    description: "GitHub token"
 
 runs:
   using: 'composite'
@@ -40,23 +42,8 @@ runs:
         sudo apt-get install pandoc
         cd ${{ inputs.code-dir }}
         mkdir review_by_file
-        # Get ultimate parent repo owner:
-        if [ -z "${{ inputs.reference-repo }}" ]; then
-          export GH_TOKEN=${{ github.token }}
-          REPO=$(gh repo view --json nameWithOwner -q .nameWithOwner)
-          for i in {1..10}; do
-            PARENT_JSON=$(gh repo view "$REPO" --json parent -q .parent)
-            if [[ -z "$PARENT_JSON" ]]; then
-              echo "Ultimate parent: $REPO"
-              break
-            fi
-          REPO=$(echo "$PARENT_JSON" | jq -r .nameWithOwner)
-          done
-        else
-          REPO=${{ inputs.reference-repo}}
-        fi
         # Get list of differing files compared with reference URL/branch:
-        git remote add reference https://github.com/$REPO
+        git remote add reference https://github.com/${{ inputs.reference-owner }}/${{ github.event.repository.name }}
         git remote update reference
         diff_files=$(git diff --name-only reference/${{ inputs.reference-branch }} HEAD)
         # Get diff for each file and query LLM API:

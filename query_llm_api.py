@@ -29,6 +29,8 @@ else:
   with open(args.key_file, "r") as key_file:
     api_key = key_file.read().strip()
 
+assert len(api_key)>1, "ERROR: Zero-length API key detected"
+
 if args.backend=="gemini-2.0":
   url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
   params = {'key': api_key,}
@@ -45,6 +47,7 @@ elif args.backend=="mistral":
   }
   json_send = {"model": "mistral-large-latest", "messages": [{"role": "user", "content": query_text}]}
   response = requests.post(url, headers=headers, json=json_send)
+  assert response.status_code==200, "ERROR: Request failed (status code not 200)"
   review = json.loads(response.content.decode())["choices"][0]["message"]["content"]
 
 with open(args.output_filename, "w") as output_file:

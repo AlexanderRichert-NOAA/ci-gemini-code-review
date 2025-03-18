@@ -3,12 +3,8 @@ description: 'Query an LLM API to create a code review'
 
 inputs:
   backend:
-    type: choice
-    options:
-    - gemini-2.0
-    - mistral
     default: gemini-2.0
-    description: "Language model to query"
+    description: "Language model to query (gemini, mistral, or gh-<GitHub Models model name> (e.g., gh-phi-4, gh-gpt-4o)"
   code-dir:
     default: "coderoot"
   api-key-variable:
@@ -24,7 +20,7 @@ inputs:
   prompt-text:
     default: "Create a code review for the following file diff. Create a bulleted list summarizing the changes, including the inferred purpose of the change, any errors, and suggestions for better approaches if appropriate.\n"
   github-token:
-    description: "GitHub token"
+    description: "GitHub token for posting PR comments"
 
 runs:
   using: 'composite'
@@ -62,7 +58,7 @@ runs:
       id: upload-artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ inputs.backend }}-code-reviews-${{ github.sha }}-${{ inputs.reference-branch }}
+        name: ${{ inputs.backend }}-code-reviews-${{ github.event.repository.name }}-${{ github.sha }}-${{ inputs.reference-branch }}
         path: ${{ inputs.code-dir }}/review_by_file/
 
     - name: 'Comment PR'

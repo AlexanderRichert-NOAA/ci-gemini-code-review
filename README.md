@@ -20,7 +20,7 @@ Author: Alex Richert ([@AlexanderRichert-NOAA](https://github.com/AlexanderRiche
 
 ### Create a new workflow
 
-Create a new workflow in your repository called, say, code-review.yml with the below code. Note that in order to use the pull_request_target trigger (see Usage below), this workflow must be in the base repository's default branch ("develop" for all NOAA-EMC repos). See Inputs below for a list of configurable options.
+Create a new workflow in your repository called, say, code-review.yml with the below code. Note that in order to use the pull_request_target trigger (see [Usage](#usage) below), this workflow must be in the base repository's default branch ("develop" for all NOAA-EMC repos). See [Inputs](#inputs) below for a list of configurable options.
 
 ```yaml
 name: ai-code-review

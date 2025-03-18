@@ -20,7 +20,7 @@ Author: Alex Richert ([@AlexanderRichert-NOAA](https://github.com/AlexanderRiche
 
 ### Create a new workflow
 
-Create a new workflow in your repository called, say, code-review.yml with the below code. Note that in order to use the pull_request_target trigger (see Usage below), this workflow must be in the base repository's default branch ("develop" for all NOAA-EMC repos).
+Create a new workflow in your repository called, say, code-review.yml with the below code. Note that in order to use the pull_request_target trigger (see Usage below), this workflow must be in the base repository's default branch ("develop" for all NOAA-EMC repos). See Inputs below for a list of configurable options.
 
 ```yaml
 name: ai-code-review
@@ -66,6 +66,7 @@ jobs:
         # Modify these inputs to select a model/API
         backend: gh-phi-4
         api-key-variable: GH_API_KEY
+        github-token: ${{ github.token }}
 ```
 
 ## Usage:
@@ -97,3 +98,17 @@ There are three ways to use this action to generate AI-based code reviews. Be su
 
 > [!WARNING]  
 >  When using a `pull_request_target` workflow event, the workflow will have access to the target repo's secrets. Be sure that when you open a pull request whose base repository has one or more workflows containing the `pull_request_target` trigger, it is a repository that you trust to not steal or abuse your secrets.
+
+### Inputs
+
+| Name | Description | Default | Required |
+| ---- | ----------- | ------- | -------- |
+| `backend` | Language model to query: gemini, mistral, or gh-<GitHub Models model name> (e.g., gh-phi-4, gh-gpt-4o) | `gemini-2.0` | No |
+| `code-dir` | Directory containing modified code | `coderoot` | No |
+| `api-key-variable` | Name of variable in which API key is stored; must be set in calling workflow | `LLM_API_KEY` | No |
+| `api-key` | API key | `empty` | No |
+| `reference-owner` | Owner of reference branch to diff against | `NOAA-EMC` | No |
+| `reference-branch` | Name of reference branch to diff against | `${{ github.event.pull_request.base.ref \|\| 'develop' }}` | No |
+| `context-lines` | Number of context lines for each file diff | `100` | No |
+| `prompt-text` | Input prompt provided before each file diff | (see action.yml) | No |
+| `github-token` | GitHub token for posting PR comments | n/a (must be set to `github.token` in calling workflow) | No |

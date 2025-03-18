@@ -10,6 +10,9 @@ inputs:
   api-key-variable:
     default: LLM_API_KEY
     description: "Name of variable in which API key is stored; must be set in calling workflow"
+  api-key:
+    description: "API key"
+    default: 'empty'
   reference-owner:
     description: "Owner of authoritative branch (e.g., NOAA-EMC)"
     default: NOAA-EMC
@@ -35,6 +38,9 @@ runs:
     - name: 'Get diffs and run query'
       shell: bash
       run: |
+        if [ "${{ inputs.api-key }}" != 'empty' ]; then
+          export ${{ inputs.api-key-variable }}=${{ inputs.api-key }}
+        fi
         sudo apt-get install pandoc
         cd ${{ inputs.code-dir }}
         mkdir review_by_file

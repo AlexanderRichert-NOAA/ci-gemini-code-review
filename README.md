@@ -1,8 +1,8 @@
 # ci-llm-code-review
 
-This custom GitHub action provides AI-generated code reviews based on several freely available APIs, specifically, GitHub Models (which has various models including Microsoft PHI models, GPT4, Llama), Google Gemini, and Mistral AI. It uploads the reviews as HTML files, one per modified file, to a GitHub Actions artifact (ZIP file).
+This custom GitHub action provides AI-generated code reviews based on several freely available APIs, specifically, GitHub Models (which has various models including Microsoft Phi models, GPT4, Llama), Google Gemini, and Mistral AI. It uploads the reviews as HTML files, one per modified file, to a GitHub Actions artifact (ZIP file) associated with the calling workflow.
 
-Author: Alex Richert (@AlexanderRichert-NOAA)
+Author: Alex Richert ([@AlexanderRichert-NOAA](https://github.com/AlexanderRichert-NOAA))
 
 ## Installation
 
@@ -80,14 +80,20 @@ There are three ways to use this action to generate AI-based code reviews. Be su
 
 3. You may need to reload the page to see the new workflow instance. Click on it, and when it is complete, find the URL proceeding "Artifact download URL:" at the bottom to download the code reviews.
 
-### Option 2: pull_request trigger: same repo
-1. Add the above workflow (code-review.yml) to some branch of your repository. Typically this will be a repo owned by NOAA-EMC (not a fork).
+### Option 2: `pull_request` trigger: same repo
+1. Add the above workflow (code-review.yml) to some branch of your repository. Typically this will be a repo owned by NOAA-EMC (this does not work from a fork branch).
 
-2. As long as code-review.yml is present in the target branch of a GitHub pull request (i.e., the branch containing the modified code to be merged), it should automatically run and post a comment to the PR containing a link to the workflow artifact.
+2. Create a uniquely named secret (ALEX_GH_API_KEY) in your repository.  
 
-### Option 3: pull_request_target trigger: fork to upstream
+3. As long as code-review.yml is present in the target branch of a GitHub pull request (i.e., the branch containing the modified code to be merged), it should automatically run and post a comment to the PR containing a link to the workflow artifact.
+
+> [!NOTE]  
+> In a repository with multiple contributors who each have their own API keys/secrets, you will need to assign the appropriate secret to the appropriate environment variable, for example, `GH_API_KEY: ${{ secrets.ALEX_GH_API_KEY }}`. Those modifications can either be reverted prior to merging the pull request, or can be left in place for the next user to modify as needed.
+
+### Option 3: `pull_request_target` trigger: fork to upstream
 1. Add the above workflow (code-review.yml) to the *default* branch ("develop" "main" etc.) of your upstream repository (i.e., owned by NOAA-EMC). It must be merged into that branch before it can be used.
 
 2. Create a pull request targeting the default branch ("develop" "main" etc.) and this action should automatically run and post a comment to the PR containing a link to the workflow artifact.
 
-**Note** When using a `pull_request_target` workflow event, the workflow will have access to the target repo's secrets. Be sure that when you open a pull request whose base repository has one or more workflows containing the `pull_request_target` trigger, it is a repository that you trust to not steal or abuse your secrets.
+> [!WARNING]  
+>  When using a `pull_request_target` workflow event, the workflow will have access to the target repo's secrets. Be sure that when you open a pull request whose base repository has one or more workflows containing the `pull_request_target` trigger, it is a repository that you trust to not steal or abuse your secrets.

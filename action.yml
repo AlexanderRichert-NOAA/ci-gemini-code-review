@@ -68,7 +68,7 @@ runs:
         path: ${{ inputs.code-dir }}/review_by_file/
 
     - name: 'Comment PR'
-      if: ${{ github.event_name == 'pull_request' }}
+      if: ${{ github.event_name == 'pull_request' || github.event_name == 'pull_request_target' }}
       uses: actions/github-script@v7
       with:
         github-token: ${{ github.token }}

@@ -103,7 +103,7 @@ There are three ways to use this action to generate AI-based code reviews. Be su
 
 | Name | Description | Default | Required |
 | ---- | ----------- | ------- | -------- |
-| `backend` | Language model to query: gemini, mistral, or gh-<GitHub Models model name> (e.g., gh-phi-4, gh-gpt-4o) | `gemini-2.0` | No |
+| `backend` | Language model to query: gemini-2.0, mistral, or gh-<GitHub Models model name> (e.g., gh-phi-4, gh-gpt-4o) | `gemini-2.0` | No |
 | `code-dir` | Directory containing modified code | `coderoot` | No |
 | `api-key-variable` | Name of variable in which API key is stored; must be set in calling workflow | `LLM_API_KEY` | No |
 | `api-key` | API key | `empty` | No |

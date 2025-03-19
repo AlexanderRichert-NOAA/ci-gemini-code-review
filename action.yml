@@ -4,7 +4,7 @@ description: 'Query an LLM API to create a code review'
 inputs:
   backend:
     default: gemini-2.0
-    description: "Language model to query (gemini, mistral, or gh-<GitHub Models model name> (e.g., gh-phi-4, gh-gpt-4o)"
+    description: "Language model to query (gemini-2.0, mistral, or gh-<GitHub Models model name> (e.g., gh-phi-4, gh-gpt-4o)"
   code-dir:
     default: "coderoot"
   api-key-variable:

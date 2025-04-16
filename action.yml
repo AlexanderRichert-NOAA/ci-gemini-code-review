@@ -21,7 +21,7 @@ inputs:
   context-lines:
     default: 100
   prompt-text:
-    default: "Create a code review for the following file diff. Structure the review as 'Summary of Changes,' 'Issues & Possible Errors,' and 'Suggestions' with possible better approaches if appropriate. Infer functionality from throughout the code but focus your review solely on the new and removed lines indicated by + and - symbols.\n"
+    default: "Create a code review for the following file diff. Structure the review as 'Summary of Changes,' 'Issues & Possible Errors,' and 'Suggestions' with possible better approaches if appropriate. Focus your review on the new and removed lines indicated by + and - symbols, using the surrounding context to understand the impacts of those changes.\n"
   github-token:
     description: "GitHub token for posting PR comments"
 

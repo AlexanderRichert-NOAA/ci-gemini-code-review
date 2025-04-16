@@ -22,8 +22,10 @@ Author: Alex Richert ([@AlexanderRichert-NOAA](https://github.com/AlexanderRiche
 
 Create a new workflow in your repository called, say, code-review.yml with the below code. Note that in order to use the pull_request_target trigger (see [Usage](#usage) below), this workflow must be in the base repository's default branch ("develop" for all NOAA-EMC repos). See [Inputs](#inputs) below for a list of configurable options.
 
+Note that not all of `workflow_dispatch`, `pull_request`, and `pull_request_target` are necessarily needed; for many repositories it will make sense to use one or two depending on the anticipated usage.
+
 ```yaml
-name: ai-code-review
+name: llm-code-review
 on:
   workflow_dispatch:
     branches: '*'
@@ -33,7 +35,7 @@ on:
     branches: '*'
 
 jobs:
-  ai-code-review:
+  llm-code-review:
     runs-on: ubuntu-latest
     env:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -75,9 +77,9 @@ There are three ways to use this action to generate AI-based code reviews. Be su
 
 ### Option 1: Manual trigger
 
-1. Add the above workflow (code-review.yml) to some branch of your repository, which may be a fork.
+1. Add the above workflow (code-review.yml) to the default branch of your repository and ensure it also present in the branch to be tested. These branches may reside in a fork, in which case they will run in that context.
 
-2. In your repository, go to Actions, click the 'ai-code-review' workflow on the left, and click the 'Run workflow' menu on the right, selecting the branch you wish to obtain a code review for.
+2. In your repository, go to Actions, click the 'llm-code-review' workflow on the left, and click the 'Run workflow' menu on the right, selecting the branch you wish to obtain a code review for.
 
 3. You may need to reload the page to see the new workflow instance. Click on it, and when it is complete, find the URL proceeding "Artifact download URL:" at the bottom to download the code reviews.
 

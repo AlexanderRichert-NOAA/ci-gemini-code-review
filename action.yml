@@ -3,7 +3,7 @@ description: 'Query an LLM API to create a code review'
 
 inputs:
   backend:
-    default: gemini-2.0
+    default: gh-gpt-4o
     description: "Language model to query (gemini-2.0, mistral, or gh-<GitHub Models model name> (e.g., gh-phi-4, gh-gpt-4o)"
   code-dir:
     default: "coderoot"
@@ -41,14 +41,14 @@ runs:
         if [ "${{ inputs.api-key }}" != 'empty' ]; then
           export ${{ inputs.api-key-variable }}=${{ inputs.api-key }}
         fi
-        sudo apt-get install pandoc
+        sudo apt-get --quiet install pandoc
         cd ${{ inputs.code-dir }}
         mkdir review_by_file
-        # Get list of differing files compared with reference URL/branch:
+        echo "Getting list of differing files compared with reference URL/branch"
         git remote add reference https://github.com/${{ inputs.reference-owner }}/${{ github.event.repository.name }}
         git remote update reference
         diff_files=$(git diff --name-only reference/${{ inputs.reference-branch }} HEAD)
-        # Get diff for each file and query LLM API:
+        echo "Getting diff for each file and querying LLM API"
         for file in $diff_files ; do
           if [ ! -f $file ]; then continue ; fi
           filetype=$(file -b $file)
@@ -58,6 +58,7 @@ runs:
           ${{ github.action_path }}/query_llm_api.py ${file}.diff ${file}.review --backend ${{ inputs.backend }} --key-variable ${{ inputs.api-key-variable }}
           pandoc -f commonmark ${file}.review -o ${file}.review.html
           mv ${file}.review.html review_by_file/.
+          echo "Processed ${file}"
         done
 
     - name: 'Upload reviews as artifact'

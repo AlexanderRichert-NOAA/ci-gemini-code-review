@@ -24,6 +24,9 @@ inputs:
     default: "Create a code review for the following file diff. Structure the review as 'Summary of Changes,' 'Issues & Possible Errors,' and 'Suggestions' with possible better approaches if appropriate. Focus your review on the new and removed lines indicated by + and - symbols, using the surrounding context to understand the impacts of those changes.\n"
   github-token:
     description: "GitHub token for posting PR comments"
+  save-diff-files:
+    description: "Save diff files for debugging purposes"
+    default: false
 
 runs:
   using: 'composite'
@@ -55,6 +58,10 @@ runs:
           if [[ " $filetype " =~ " data " ]]; then continue ; fi
           echo -e "${{ inputs.prompt-text }}" > ${file}.diff
           git diff --no-prefix -U${{ inputs.context-lines }} reference/${{ inputs.reference-branch }} HEAD -- $file >> ${file}.diff
+          if [ "${{ inputs.save-diff-files }}" == true ]; then
+            mkdir -p ${GITHUB_WORKSPACE}/diffs
+            cp ${file}.diff ${GITHUB_WORKSPACE}/diffs/.
+          fi
           ${{ github.action_path }}/query_llm_api.py ${file}.diff ${file}.review --backend ${{ inputs.backend }} --key-variable ${{ inputs.api-key-variable }}
           pandoc -f commonmark ${file}.review -o ${file}.review.html
           mv ${file}.review.html review_by_file/.
@@ -67,6 +74,14 @@ runs:
       with:
         name: ${{ inputs.backend }}-code-reviews-${{ github.event.repository.name }}-${{ github.sha }}-${{ inputs.reference-branch }}
         path: ${{ inputs.code-dir }}/review_by_file/
+
+    - name: 'Upload diffs as artifact'
+      id: upload-diffs-artifact
+      uses: actions/upload-artifact@v4
+      if: ${{ inputs.save-diff-files == 'true' }}
+      with:
+        name: ${{ inputs.backend }}-diffs-${{ github.event.repository.name }}-${{ github.sha }}-${{ inputs.reference-branch }}
+        path: ${{ github.workspace }}/diffs
 
     - name: 'Comment PR'
       if: ${{ github.event_name == 'pull_request' || github.event_name == 'pull_request_target' }}

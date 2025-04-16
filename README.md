@@ -77,7 +77,7 @@ There are three ways to use this action to generate AI-based code reviews. Be su
 
 ### Option 1: Manual trigger
 
-1. Add the above workflow (code-review.yml) to the default branch of your repository and ensure it also present in the branch to be tested. These branches may reside in a fork, in which case they will run in that context.
+1. Add the above workflow (code-review.yml) to the default branch of your repository and ensure it also present in the branch to be tested (if there are differences in the workflow files, it is the one that lives in the test branch that will actually be run). These branches may reside in a fork, in which case they will run in that context.
 
 2. In your repository, go to Actions, click the 'llm-code-review' workflow on the left, and click the 'Run workflow' menu on the right, selecting the branch you wish to obtain a code review for.
 

@@ -99,7 +99,7 @@ There are three ways to use this action to generate AI-based code reviews. Be su
 2. Create a pull request targeting the default branch ("develop" "main" etc.) and this action should automatically run and post a comment to the PR containing a link to the workflow artifact.
 
 > [!WARNING]  
->  When using a `pull_request_target` workflow event, the workflow will have access to the target repo's secrets. Be sure that when you open a pull request whose base repository has one or more workflows containing the `pull_request_target` trigger, it is a repository that you trust to not steal or abuse your secrets.
+>  When using a `pull_request_target` workflow event, **the workflow will have access to the parent repository's secrets and can set GitHub Actions permissions in the context of the parent repo**. This trigger should only be used for repos that require approval for new and/or non-organizational developers so that the code being evaluated in the CI is always from a trusted source.
 
 ### Inputs
 

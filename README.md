@@ -88,7 +88,7 @@ There are three ways to use this action to generate AI-based code reviews. Be su
 
 2. Create a uniquely named secret (ALEX_GH_API_KEY) in your repository (for GitHub-served models, see [Configure permissions for using GitHub Models](#configure-permissions-for-using-github-models-optional-alternative-is-external-models-google-gemini-mistral-ai) for PAT/secret configuration). 
 
-3. As long as code-review.yml is present in the target branch of a GitHub pull request (i.e., the branch containing the modified code to be merged), it should automatically run and post a comment to the PR containing a link to the workflow artifact.
+3. As long as code-review.yml is present in the target branch of a GitHub pull request (i.e., the branch containing the modified code to be merged), it will automatically run and post a comment to the PR containing a link to the workflow artifact.
 
 > [!NOTE]  
 > In a repository with multiple contributors who each have their own API keys/secrets, you will need to assign the appropriate secret to the appropriate environment variable, for example, `GH_API_KEY: ${{ secrets.ALEX_GH_API_KEY }}`. Those modifications can either be reverted prior to merging the pull request, or can be left in place for the next user to modify as needed.
@@ -96,7 +96,7 @@ There are three ways to use this action to generate AI-based code reviews. Be su
 ### Option 3: `pull_request_target` trigger: fork to upstream
 1. Add the above workflow (code-review.yml) to the *default* branch ("develop" "main" etc.) of your upstream repository (i.e., owned by NOAA-EMC). It must be merged into that branch before it can be used.
 
-2. Create a pull request targeting the default branch ("develop" "main" etc.) and this action should automatically run and post a comment to the PR containing a link to the workflow artifact.
+2. Create a pull request targeting the default branch ("develop" "main" etc.) and this action will automatically run and post a comment to the PR containing a link to the workflow artifact.
 
 > [!WARNING]  
 >  When using a `pull_request_target` workflow event, **the workflow will have access to the parent repository's secrets**. This trigger should only be used for repos that require approval for new and/or non-organizational developers so that the code being evaluated in the CI is always from a trusted source.

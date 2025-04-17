@@ -12,7 +12,7 @@ Author: Alex Richert ([@AlexanderRichert-NOAA](https://github.com/AlexanderRiche
 
 2. Copy and paste the key into a repository-level secret called GEMINI_API_KEY or MISTRAL_API_KEY as appropriate if you plan to run workflows in your fork (if you are putting a token in a repo owned by NOAA-EMC, see the Usage instructions below).
 
-### Configure permissions for using GitHub Models (optional; alternative in external models Google Gemini, Mistral AI)
+### Configure permissions for using GitHub Models (optional; alternative is external models Google Gemini, Mistral AI)
 
 1. Create a fine-grained ("beta version") Personal Access Token for your user.
 
@@ -86,7 +86,7 @@ There are three ways to use this action to generate AI-based code reviews. Be su
 ### Option 2: `pull_request` trigger: same repo
 1. Add the above workflow (code-review.yml) to some branch of your repository. Typically this will be a repo owned by NOAA-EMC (this does not work from a fork branch).
 
-2. Create a uniquely named secret (ALEX_GH_API_KEY) in your repository.  
+2. Create a uniquely named secret (ALEX_GH_API_KEY) in your repository (for GitHub-served models, see [Configure permissions for using GitHub Models](#configure-permissions-for-using-github-models-optional-alternative-is-external-models-google-gemini-mistral-ai) for PAT/secret configuration). 
 
 3. As long as code-review.yml is present in the target branch of a GitHub pull request (i.e., the branch containing the modified code to be merged), it should automatically run and post a comment to the PR containing a link to the workflow artifact.
 

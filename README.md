@@ -22,7 +22,7 @@ Author: Alex Richert ([@AlexanderRichert-NOAA](https://github.com/AlexanderRiche
 
 Create a new workflow in your repository called, say, code-review.yml with the below code. Note that in order to use the pull_request_target trigger (see [Usage](#usage) below), this workflow must be in the base repository's default branch ("develop" for all NOAA-EMC repos). See [Inputs](#inputs) below for a list of configurable options.
 
-Note that not all of `workflow_dispatch`, `pull_request`, and `pull_request_target` are necessarily needed; for many repositories it will make sense to use one or two depending on the anticipated usage.
+Note that not all of `workflow_dispatch`, `pull_request`, and `pull_request_target` are necessarily needed; for many repositories it will make sense to use one or two of these approaches depending on the anticipated usage.
 
 ```yaml
 name: llm-code-review

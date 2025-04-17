@@ -21,7 +21,7 @@ inputs:
   context-lines:
     default: 100
   prompt-text:
-    default: "Create a code review for the following file diff. Structure the review as 'Summary of Changes,' 'Issues & Possible Errors,' and 'Suggestions' with possible better approaches if appropriate. Focus your review on the new and removed lines indicated by + and - symbols, using the surrounding context to understand the impacts of those changes.\n"
+    default: "Create a code review for the following file diff. Structure the review as 'Summary of Changes,' 'Issues & Possible Errors,' and 'Suggestions' with possible better approaches if appropriate. Focus your review on the new and removed lines indicated by + and - symbols, using the surrounding context to understand the impacts of those changes. These changes are part of the NOAA EMC '${{ github.event.repository.name }}' repository, so please consider the implications of these changes for the rest of the code.\n"
   github-token:
     description: "GitHub token for posting PR comments"
   save-diff-files:

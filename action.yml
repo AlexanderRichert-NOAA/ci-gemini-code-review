@@ -30,6 +30,9 @@ inputs:
   time-delay-per-file:
     description: "Set time delay before going to the next file to accommodate rate limits"
     default: 6
+  submodules:
+    description: "Diff submodules?"
+    default: true
 
 runs:
   using: 'composite'
@@ -40,6 +43,7 @@ runs:
       uses: actions/checkout@v4
       with:
         path: coderoot
+        submodules: ${{ inputs.submodules }}
 
     - name: 'Get diffs and run query'
       shell: bash
@@ -53,7 +57,10 @@ runs:
         echo "Getting list of differing files compared with reference URL/branch"
         git remote add reference https://github.com/${{ inputs.reference-owner }}/${{ github.event.repository.name }}
         git remote update reference
-        diff_files=$(git diff --name-only reference/${{ inputs.reference-branch }} HEAD)
+        if [ ${{ inputs.submodules }} == true ]; then
+          SUBMODULEFLAG="--submodule=diff"
+        fi
+        diff_files=$(git diff $SUBMODULEFLAG --name-only reference/${{ inputs.reference-branch }} HEAD)
         echo "Getting diff for each file and querying LLM API"
         for file in $diff_files ; do
           if [ ! -f $file ]; then continue ; fi

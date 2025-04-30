@@ -59,6 +59,7 @@ runs:
         git remote update reference
         if [ ${{ inputs.submodules }} == true ]; then
           SUBMODULEFLAG="--submodule=diff"
+          git submodule update --init --recursive --remote
         fi
         diff_files=$(git diff $SUBMODULEFLAG --name-only reference/${{ inputs.reference-branch }} HEAD)
         echo "Getting diff for each file and querying LLM API"

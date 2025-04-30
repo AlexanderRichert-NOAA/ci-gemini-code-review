@@ -27,6 +27,9 @@ inputs:
   save-diff-files:
     description: "Save diff files for debugging purposes"
     default: false
+  time-delay-per-file:
+    description: "Set time delay before going to the next file to accommodate rate limits"
+    default: 6
 
 runs:
   using: 'composite'
@@ -66,7 +69,7 @@ runs:
           pandoc -f commonmark ${file}.review -o ${file}.review.html
           mv ${file}.review.html review_by_file/.
           echo "Processed ${file}"
-          sleep 6
+          sleep ${{ inputs.time-delay-per-file }}
         done
 
     - name: 'Upload reviews as artifact'

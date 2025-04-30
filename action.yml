@@ -66,6 +66,7 @@ runs:
           pandoc -f commonmark ${file}.review -o ${file}.review.html
           mv ${file}.review.html review_by_file/.
           echo "Processed ${file}"
+          sleep 6
         done
 
     - name: 'Upload reviews as artifact'

@@ -62,7 +62,7 @@ jobs:
         fi
 
     - name: "Code review"
-      uses: AlexanderRichert-NOAA/ci-llm-code-review@develop
+      uses: NOAA-EMC/ci-llm-code-review@develop
       if: ${{ env.CONTINUE == 'true' }}
       with:
         # Modify these inputs to select a model/API

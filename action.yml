@@ -66,6 +66,7 @@ runs:
           git ls-tree -r --name-only reference/${{ inputs.reference-branch }} -- src/ | while read -r f; do   git show "reference/${{ inputs.reference-branch }}:$f" | file --mime - | grep -q text && echo "=== $f ===" && git show "reference/${{ inputs.reference-branch }}:$f"; done &>> query.txt
           ${{ github.action_path }}/query_llm_api.py query.txt review.md --backend ${{ inputs.backend }} --key-variable ${{ inputs.api-key-variable }}
           pandoc -f commonmark review.md -o review.html
+          cp review.html reviews/.
         else
           for file in $diff_files ; do
             if [ ! -f $file ]; then continue ; fi

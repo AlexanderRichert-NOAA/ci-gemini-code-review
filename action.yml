@@ -34,7 +34,7 @@ inputs:
       - Suggestions - Recommend better approaches for the specific modifications shown (do not suggest changes unrelated to the diffs)
 
       Important constraints:
-      - Only identify code modifications based on lines marked with + (additions) and - (deletions) in the diffs. Diff lines without + and - signs, as well as the unmodified context file, do not represent code modifications.
+      - Only identify code modifications based on lines marked with + (additions) and - (deletions) in the diffs. Diff lines without + and - signs, as well as the unmodified context file, do not represent code modifications. Contents of files not shown in the diff output should not be considered modified, and therefore should not be discussed unless directly relevant to modifications revealed by the diff output.
       - Use the reference source code to understand context and identify where additional changes may be needed. Do not discuss the reference source code unless it reveals issues with the modifications, such as if a change shown in the file diffs should be or might need to be reflected elsewhere in the code (such as the deletion of a variable).
       - Treat unmarked lines in diffs as context only - do not review them unless they reveal issues with the modifications.
       - Show exact code corrections using clear before/after format or specify precise insertion points.
@@ -78,8 +78,8 @@ runs:
         if [ ${{ inputs.provide-codebase }} != false ]; then
           echo -e "${{ inputs.prompt-text }}" > query.txt
           #echo -e "After the diff-formatted modifications by file, the entire unmodified codebase, labeled by file, has been provided for context. Please identify any instances where modifications have not been appropriately applied throughout the codebase.\n\n" >> query.txt
-          git diff --no-prefix -U${{ inputs.context-lines }} reference/${{ inputs.reference-branch }} HEAD >> query.txt
-          echo >> query.txt
+          git diff --no-prefix reference/${{ inputs.reference-branch }} HEAD >> query.txt
+          echo -e "\nThe following is the raw source code, provided only for context. Do not review or discuss this code unless directly relevant to the code modifications shown in the above diff output.\n" >> query.txt
           git ls-tree -r --name-only reference/${{ inputs.reference-branch }} -- src/ | while read -r f; do   git show "reference/${{ inputs.reference-branch }}:$f" | file --mime - | grep -q text && echo "=== $f ===" && git show "reference/${{ inputs.reference-branch }}:$f"; done &>> query.txt
           ${{ github.action_path }}/query_llm_api.py query.txt review.md --backend ${{ inputs.backend }} --key-variable ${{ inputs.api-key-variable }}
           pandoc -f commonmark review.md -o review.html

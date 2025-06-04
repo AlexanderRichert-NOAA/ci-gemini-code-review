@@ -27,15 +27,15 @@ inputs:
       2. Reference source code - the complete, unmodified contents of all relevant files, labeled by filename
 
       Review the code modifications shown in the diffs, inferring the programming language from file extensions and syntax.
-      Structure your review with exactly these three sections:
+      Structure your review into markdown-formatted output with exactly these three sections:
 
-      - Summary of Changes - Briefly describe what modifications were made across all files, based on the provided code diffs.
-      - Issues & Possible Errors - Identify problems with the modifications, providing specific corrections including exact line locations, missing declarations, or other changes needed elsewhere in the codebase (use the reference source code to identify ripple effects)
-      - Suggestions - Recommend better approaches for the specific modifications shown (do not suggest changes unrelated to the diff)
+      - Summary of Changes - Briefly describe what modifications were made across all files, based on the provided code diffs. Be careful not to review unmodified code unless it is directly relevant to the modifications shown in the file diffs.
+      - Issues & Possible Errors - Identify problems with the modifications shown in the file diffs, providing specific corrections including exact line locations, missing declarations, or other changes needed elsewhere in the codebase (use the reference source code only to identify ripple effects; do not review unmodified source code)
+      - Suggestions - Recommend better approaches for the specific modifications shown (do not suggest changes unrelated to the diffs)
 
       Important constraints:
-      - Focus exclusively on lines marked with + (additions) and - (deletions) in the diffs.
-      - Use the reference source code to understand context and identify where additional changes may be needed. Do not review the reference source code unless it reveals issues with the modifications.
+      - Only identify code modifications based on lines marked with + (additions) and - (deletions) in the diffs. Diff lines without + and - signs, as well as the unmodified context file, do not represent code modifications.
+      - Use the reference source code to understand context and identify where additional changes may be needed. Do not discuss the reference source code unless it reveals issues with the modifications, such as if a change shown in the file diffs should be or might need to be reflected elsewhere in the code (such as the deletion of a variable).
       - Treat unmarked lines in diffs as context only - do not review them unless they reveal issues with the modifications.
       - Show exact code corrections using clear before/after format or specify precise insertion points.
       - If no issues exist in a section, state "None identified".

@@ -30,7 +30,7 @@ inputs:
       Structure your review into markdown-formatted output with exactly these three sections:
 
       - Summary of Changes - Briefly describe what modifications were made across all files, based on the provided code diffs. Be careful not to review unmodified code unless it is directly relevant to the modifications shown in the file diffs.
-      - Issues & Possible Errors - Identify problems with the modifications shown in the file diffs, providing specific corrections including exact line locations, missing declarations, or other changes needed elsewhere in the codebase (use the reference source code only to identify ripple effects; do not review unmodified source code)
+      - Issues & Possible Errors - Identify problems with the modifications shown in the file diffs, providing specific corrections including exact line locations, missing declarations, or other changes needed elsewhere in the codebase (use the reference source code only to identify ripple effects; do not review unmodified source code). If there are inconsistencies between the code modifications and the rest of the code base and developer intent is unclear, show both/all ways of resolving a given inconsistency (e.g., for a deleted variable declaration, show how to reinsert it, but also show how to update the rest of the code to be consistent with that change in case that is the developer's intent).
       - Suggestions - Recommend better approaches for the specific modifications shown (do not suggest changes unrelated to the diffs)
 
       Important constraints:

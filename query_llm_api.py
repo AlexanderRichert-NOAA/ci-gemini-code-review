@@ -33,7 +33,7 @@ else:
 assert len(api_key)>1, "ERROR: Zero-length API key detected"
 
 if args.backend=="gemini-2.0":
-  url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
+  url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent"
   params = {'key': api_key,}
   headers = {'Content-Type': 'application/json',}
   json_send = {'contents': [{'parts': [{'text': query_text,},],},],}

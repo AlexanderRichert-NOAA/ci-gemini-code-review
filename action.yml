@@ -60,7 +60,7 @@ runs:
         echo "Getting diff for each file and querying LLM API"
         if [ ${{ inputs.provide-codebase }} != false ]; then
           echo -e "${{ inputs.prompt-text }}" > query.txt
-          echo -e "After the diff-formatted modifications by file, the entire unmodified codebase, labeled by file, has been provided for context. Please identify any instances where modifications have not been appropriately applied throughout the codebase.\n\n" >> query.txt
+          #echo -e "After the diff-formatted modifications by file, the entire unmodified codebase, labeled by file, has been provided for context. Please identify any instances where modifications have not been appropriately applied throughout the codebase.\n\n" >> query.txt
           git diff --no-prefix -U${{ inputs.context-lines }} reference/${{ inputs.reference-branch }} HEAD >> query.txt
           echo >> query.txt
           git ls-tree -r --name-only reference/${{ inputs.reference-branch }} -- src/ | while read -r f; do   git show "reference/${{ inputs.reference-branch }}:$f" | file --mime - | grep -q text && echo "=== $f ===" && git show "reference/${{ inputs.reference-branch }}:$f"; done &>> query.txt

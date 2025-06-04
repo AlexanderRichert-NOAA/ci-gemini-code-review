@@ -68,6 +68,7 @@ runs:
           pandoc -f commonmark review.md -o review.html
           cp review.html reviews/.
           if [ "${{ inputs.save-diff-files }}" == true ]; then
+            mkdir -p ${GITHUB_WORKSPACE}/diffs
             cp query.txt ${GITHUB_WORKSPACE}/diffs/.
           fi
         else

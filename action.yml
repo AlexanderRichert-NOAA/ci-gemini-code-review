@@ -21,7 +21,24 @@ inputs:
   context-lines:
     default: 100
   prompt-text:
-    default: "Create a code review for the following file diff. Structure the review as 'Summary of Changes,' 'Issues & Possible Errors,' and 'Suggestions' with possible better approaches if appropriate. Focus your review on the new and removed lines indicated by + and - symbols, using the surrounding context to understand the impacts of those changes. These changes are part of the NOAA EMC '${{ github.event.repository.name }}' repository, so please consider the implications of these changes for the rest of the code.\n"
+    default: |
+      Follow these instructions carefully. You will receive the following input:
+      1. File diffs comparing the current branch with a reference branch (showing modifications in unified diff format, i.e., + and - signs showing added and removed lines)
+      2. Reference source code - the complete, unmodified contents of all relevant files, labeled by filename
+
+      Review the code modifications shown in the diffs, inferring the programming language from file extensions and syntax.
+      Structure your review with exactly these three sections:
+
+      - Summary of Changes - Briefly describe what modifications were made across all files, based on the provided code diffs.
+      - Issues & Possible Errors - Identify problems with the modifications, providing specific corrections including exact line locations, missing declarations, or other changes needed elsewhere in the codebase (use the reference source code to identify ripple effects)
+      - Suggestions - Recommend better approaches for the specific modifications shown (do not suggest changes unrelated to the diff)
+
+      Important constraints:
+      - Focus exclusively on lines marked with + (additions) and - (deletions) in the diffs.
+      - Use the reference source code to understand context and identify where additional changes may be needed. Do not review the reference source code unless it reveals issues with the modifications.
+      - Treat unmarked lines in diffs as context only - do not review them unless they reveal issues with the modifications.
+      - Show exact code corrections using clear before/after format or specify precise insertion points.
+      - If no issues exist in a section, state "None identified".
   github-token:
     description: "GitHub token for posting PR comments"
   save-diff-files:

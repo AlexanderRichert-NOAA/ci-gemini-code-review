@@ -30,6 +30,9 @@ inputs:
   time-delay-per-file:
     description: "Set time delay before going to the next file to accommodate rate limits"
     default: 6
+  provide-codebase:
+    description: "Put diffs in one big query, along with rest of code base for context. Won't work for some models due to input token limits."
+    default: false
 
 runs:
   using: 'composite'
@@ -49,35 +52,45 @@ runs:
         fi
         sudo apt-get --quiet install pandoc
         cd ${{ inputs.code-dir }}
-        mkdir review_by_file
+        mkdir reviews
         echo "Getting list of differing files compared with reference URL/branch"
         git remote add reference https://github.com/${{ inputs.reference-owner }}/${{ github.event.repository.name }}
         git remote update reference
         diff_files=$(git diff --name-only reference/${{ inputs.reference-branch }} HEAD)
         echo "Getting diff for each file and querying LLM API"
-        for file in $diff_files ; do
-          if [ ! -f $file ]; then continue ; fi
-          filetype=$(file -b $file)
-          if [[ " $filetype " =~ " data " ]]; then continue ; fi
-          echo -e "${{ inputs.prompt-text }}" > ${file}.diff
-          git diff --no-prefix -U${{ inputs.context-lines }} reference/${{ inputs.reference-branch }} HEAD -- $file >> ${file}.diff
-          if [ "${{ inputs.save-diff-files }}" == true ]; then
-            mkdir -p ${GITHUB_WORKSPACE}/diffs
-            cp ${file}.diff ${GITHUB_WORKSPACE}/diffs/.
-          fi
-          ${{ github.action_path }}/query_llm_api.py ${file}.diff ${file}.review --backend ${{ inputs.backend }} --key-variable ${{ inputs.api-key-variable }}
-          pandoc -f commonmark ${file}.review -o ${file}.review.html
-          mv ${file}.review.html review_by_file/.
-          echo "Processed ${file}"
-          sleep ${{ inputs.time-delay-per-file }}
-        done
+        if [ ${{ inputs.provide-codebase }} != false ]; then
+          echo -e "${{ inputs.prompt-text }}" > query.txt
+          echo -e "After the diff-formatted modifications by file, the entire unmodified codebase, labeled by file, has been provided for context. Please identify any instances where modifications have not been appropriately applied throughout the codebase.\n\n" >> query.txt
+          git diff --no-prefix -U${{ inputs.context-lines }} reference/${{ inputs.reference-branch }} HEAD >> query.txt
+          echo >> query.txt
+          git ls-tree -r --name-only reference/${{ inputs.reference-branch }} -- src/ | while read -r f; do   git show "reference/${{ inputs.reference-branch }}:$f" | file --mime - | grep -q text && echo "=== $f ===" && git show "reference/${{ inputs.reference-branch }}:$f"; done &>> query.txt
+          ${{ github.action_path }}/query_llm_api.py query.txt review.md --backend ${{ inputs.backend }} --key-variable ${{ inputs.api-key-variable }}
+          pandoc -f commonmark review.md -o review.html
+        else
+          for file in $diff_files ; do
+            if [ ! -f $file ]; then continue ; fi
+            filetype=$(file -b $file)
+            if [[ " $filetype " =~ " data " ]]; then continue ; fi
+            echo -e "${{ inputs.prompt-text }}" > ${file}.diff
+            git diff --no-prefix -U${{ inputs.context-lines }} reference/${{ inputs.reference-branch }} HEAD -- $file >> ${file}.diff
+            if [ "${{ inputs.save-diff-files }}" == true ]; then
+              mkdir -p ${GITHUB_WORKSPACE}/diffs
+              cp ${file}.diff ${GITHUB_WORKSPACE}/diffs/.
+            fi
+            ${{ github.action_path }}/query_llm_api.py ${file}.diff ${file}.review --backend ${{ inputs.backend }} --key-variable ${{ inputs.api-key-variable }}
+            pandoc -f commonmark ${file}.review -o ${file}.review.html
+            mv ${file}.review.html reviews/.
+            echo "Processed ${file}"
+            sleep ${{ inputs.time-delay-per-file }}
+          done
+        fi
 
     - name: 'Upload reviews as artifact'
       id: upload-artifact
       uses: actions/upload-artifact@v4
       with:
         name: ${{ inputs.backend }}-code-reviews-${{ github.event.repository.name }}-${{ github.sha }}-${{ inputs.reference-branch }}
-        path: ${{ inputs.code-dir }}/review_by_file/
+        path: ${{ inputs.code-dir }}/reviews/
 
     - name: 'Upload diffs as artifact'
       id: upload-diffs-artifact

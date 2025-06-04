@@ -67,6 +67,9 @@ runs:
           ${{ github.action_path }}/query_llm_api.py query.txt review.md --backend ${{ inputs.backend }} --key-variable ${{ inputs.api-key-variable }}
           pandoc -f commonmark review.md -o review.html
           cp review.html reviews/.
+          if [ "${{ inputs.save-diff-files }}" == true ]; then
+            cp query.txt ${GITHUB_WORKSPACE}/diffs/.
+          fi
         else
           for file in $diff_files ; do
             if [ ! -f $file ]; then continue ; fi
